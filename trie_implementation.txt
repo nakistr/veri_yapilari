@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define ALFABE 26 // Sadece küçük harfler için
+
+// Trie düğümü
+typedef struct TrieNode {
+    struct TrieNode* child[ALFABE];
+    bool kelimeSonu;
+} TrieNode;
+
+// Yeni düğüm oluştur
+TrieNode* yeniDugum() {
+    TrieNode* node = (TrieNode*)malloc(sizeof(TrieNode));
+    if (node) {
+        node->kelimeSonu = false;
+        for (int i = 0; i < ALFABE; i++)
+            node->child[i] = NULL;
+    }
+    return node;
+}
+
+// Kelime ekle
+void ekle(TrieNode* kok, char* kelime) {
+    TrieNode* temp = kok;
+    
+    while (*kelime) {
+        int indeks = *kelime - 'a';
+        if (!temp->child[indeks])
+            temp->child[indeks] = yeniDugum();
+        temp = temp->child[indeks];
+        kelime++;
+    }
+    
+    temp->kelimeSonu = true;
+}
+
+// Kelime ara
+bool ara(TrieNode* kok, char* kelime) {
+    TrieNode* temp = kok;
+    
+    while (*kelime) {
+        int indeks = *kelime - 'a';
+        if (!temp->child[indeks])
+            return false;
+        temp = temp->child[indeks];
+        kelime++;
+    }
+    
+    return temp->kelimeSonu;
+}
+
+// Belleği temizle
+void temizle(TrieNode* node) {
+    if (node) {
+        for (int i = 0; i < ALFABE; i++)
+            if (node->child[i])
+                temizle(node->child[i]);
+        free(node);
+    }
+}
+
+// Örnek kullanım
+int main() {
+    // Kök düğüm
+    TrieNode* kok = yeniDugum();
+    
+    // Kelimeler ekle
+    ekle(kok, "elma");
+    ekle(kok, "armut");
+    ekle(kok, "erik");
+    ekle(kok, "elmali");
+    
+    // Kelimeleri ara
+    printf("'elma': %s\n", ara(kok, "elma") ? "var" : "yok");
+    printf("'armut': %s\n", ara(kok, "armut") ? "var" : "yok");
+    printf("'muz': %s\n", ara(kok, "muz") ? "var" : "yok");
+    
+    // Temizle
+    temizle(kok);
+    
+    return 0;
+}
