@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define SIZE 500
+#define MAX_NUM 1000
+
+// Insertion Sort algoritması
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Selection Sort algoritması (kısaltılmış)
+void selectionSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        int min_idx = i;
+        
+        for (int j = i+1; j < n; j++)
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+        
+        if (min_idx != i) {
+            int temp = arr[min_idx];
+            arr[min_idx] = arr[i];
+            arr[i] = temp;
+        }
+    }
+}
+
+int main() {
+    int original[SIZE], arr1[SIZE], arr2[SIZE];
+    clock_t start, end;
+    double t1, t2;
+    
+    // Rastgele sayı üret
+    srand(time(NULL));
+    printf("Rastgele %d sayı oluşturuluyor...\n", SIZE);
+    for (int i = 0; i < SIZE; i++) {
+        original[i] = rand() % (MAX_NUM + 1);
+        arr1[i] = arr2[i] = original[i];
+    }
+    
+    // Insertion Sort ve süre ölçümü
+    start = clock();
+    insertionSort(arr1, SIZE);
+    end = clock();
+    t1 = ((double) (end - start)) / CLOCKS_PER_SEC;
+    
+    // Selection Sort ve süre ölçümü
+    start = clock();
+    selectionSort(arr2, SIZE);
+    end = clock();
+    t2 = ((double) (end - start)) / CLOCKS_PER_SEC;
+    
+    // Sonuçlar
+    printf("\n--- SONUÇLAR ---\n");
+    printf("Insertion Sort: %f saniye\n", t1);
+    printf("Selection Sort: %f saniye\n", t2);
+    printf("%s algoritma daha hızlı (%.2f kat)\n", 
+           (t1 < t2) ? "Insertion" : "Selection",
+           (t1 < t2) ? (t2/t1) : (t1/t2));
+    
+    return 0;
+}
